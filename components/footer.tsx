@@ -10,7 +10,7 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
           <div className="flex flex-col items-center gap-2 sm:items-start">
             <Link href="/" className="text-2xl font-bold">
-              Nett-O-Mat
+              verteil-o-mat
             </Link>
             <p className="text-sm text-muted-foreground"></p>
           </div>
@@ -31,13 +31,13 @@ export function Footer() {
               Über
             </Link>
             <Link
-              href="mailto:info@nett-o-mat.de"
+              href="mailto:info@verteil-o-mat.de"
               className="text-sm hover:underline"
             >
               Kontakt
             </Link>
             <Link
-              href="https://github.com/nett-o-mat/nett-o-mat"
+              href="https://github.com/verteil-o-mat/verteil-o-mat"
               className="text-sm hover:underline flex items-center gap-2"
             >
               Code

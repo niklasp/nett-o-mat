@@ -217,7 +217,7 @@ const chartConfig = {
   },
   Linke: {
     label: "Die Linke",
-    color: "hsl(333, 60%, 45%)", // #BE3075
+    color: "hsl(333, 70%, 50%)", // #BE3075
     umverteilung: -15.9,
   },
   BSW: {
@@ -280,8 +280,12 @@ export default function IncomeImpact() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-12 sm:px-6 max-w-3xl ">
+    <div className="container mx-auto px-4 py-12 sm:px-6 max-w-4xl ">
       <h1 className="text-2xl font-bold mb-6 sm:mb-8">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-purple-500 text-5xl block">
+          Verteil-O-Mat
+        </span>
+        <br />
         Auswirkungen der Bundestagswahl am 23.02.2025 auf Ihr Einkommen
       </h1>
 
@@ -292,9 +296,9 @@ export default function IncomeImpact() {
             <Tooltip delayDuration={0}>
               <TooltipTrigger className="inline-flex items-center">
                 Haushaltsbruttoeinkommen
-                <Info className="h-4 w-4 text-gray-500 hover:text-gray-700 " />{" "}
+                <Info className="h-4 w-4 text-gray-500 hover:text-gray-700 ml-1 " />{" "}
               </TooltipTrigger>
-              <TooltipContent className="max-w-xs border border-gray-200 rounded-lg p-3 bg-white text-black">
+              <TooltipContent className="max-w-xs border text-sm border-gray-200 rounded-lg p-3 bg-white text-black">
                 Das Haushaltsbruttoeinkommen ist die Summe aller Einkünfte in
                 Ihrem Haushalt vor Abzug von Steuern und Sozialabgaben.
               </TooltipContent>
