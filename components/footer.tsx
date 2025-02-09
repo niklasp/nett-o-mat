@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 
 export function Footer() {
   return (
@@ -27,13 +28,20 @@ export function Footer() {
           </div>
           <nav className="flex gap-6">
             <Link href="/about" className="text-sm hover:underline">
-              Über uns
+              Über
             </Link>
             <Link
               href="mailto:info@nett-o-mat.de"
               className="text-sm hover:underline"
             >
               Kontakt
+            </Link>
+            <Link
+              href="https://github.com/nett-o-mat/nett-o-mat"
+              className="text-sm hover:underline flex items-center gap-2"
+            >
+              Code
+              <SiGithub className="w-3 h-3" />
             </Link>
           </nav>
         </div>

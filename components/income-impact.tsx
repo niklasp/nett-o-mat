@@ -8,7 +8,6 @@ import {
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -59,13 +58,7 @@ interface PartyValues {
 
 interface PartyImpacts {
   [bracket: string]: {
-    SPD: PartyValues;
-    CDU: PartyValues;
-    Grüne: PartyValues;
-    FDP: PartyValues;
-    AfD: PartyValues;
-    Linke: PartyValues;
-    BSW: PartyValues;
+    [party: string]: PartyValues;
   };
 }
 
@@ -222,7 +215,7 @@ function getOrderedParties(
   showAbsolute: boolean
 ): string[] {
   if (!bracket) return [];
-  const bracketImpacts = impacts[bracket];
+  const bracketImpacts = impacts[bracket as keyof PartyImpacts];
   return Object.entries(bracketImpacts)
     .sort(([, a], [, b]) => {
       const valueA = showAbsolute ? a.absolute : a.percentage;
@@ -236,7 +229,6 @@ export default function IncomeImpact() {
   const [selectedBracket, setSelectedBracket] = useState<BracketLabel | null>(
     null
   );
-  const [selectedParty, setSelectedParty] = useState<string>("Linke");
   const [view, setView] = useState<"parties" | "brackets">("parties");
   const [showAbsolute, setShowAbsolute] = useState<boolean>(true);
 
@@ -257,10 +249,12 @@ export default function IncomeImpact() {
       orderedParties.map((party) => ({
         party: party as keyof PartyImpacts,
         impact: showAbsolute
-          ? partyImpacts[selectedBracket as string][party as keyof PartyImpacts]
-              .absolute
-          : partyImpacts[selectedBracket as string][party as keyof PartyImpacts]
-              .percentage,
+          ? partyImpacts[selectedBracket as keyof PartyImpacts][
+              party as keyof PartyImpacts
+            ].absolute
+          : partyImpacts[selectedBracket as keyof PartyImpacts][
+              party as keyof PartyImpacts
+            ].percentage,
         fill: chartConfig[party as keyof typeof chartConfig]?.color,
       })),
     [orderedParties, selectedBracket, partyImpacts, chartConfig]
