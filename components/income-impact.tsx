@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 
 interface IncomeBracket {
   min: number;
@@ -168,6 +169,16 @@ const partyImpacts: PartyImpacts = {
   },
 };
 
+const povertyRiskImpacts: Record<string, number> = {
+  Linke: -15.9,
+  Grüne: -5.0,
+  SPD: 0.5,
+  CDU: 2.9,
+  BSW: 4.2,
+  FDP: 11.0,
+  AfD: 12.9,
+};
+
 interface ChartDataPoint {
   party: keyof PartyImpacts;
   impact: number;
@@ -182,30 +193,37 @@ const chartConfig = {
   SPD: {
     label: "SPD",
     color: "hsl(357, 100%, 45%)", // #E3000F
+    umverteilung: 0.5,
   },
   CDU: {
     label: "CDU",
     color: "hsl(0, 0%, 0%)", // #000000
+    umverteilung: 2.9,
   },
   Grüne: {
     label: "Die Grünen",
     color: "hsl(104, 57%, 38%)", // #46962b
+    umverteilung: -5,
   },
   FDP: {
     label: "FDP",
     color: "hsl(56, 100%, 50%)", // #FFED00
+    umverteilung: 11,
   },
   AfD: {
     label: "AfD",
     color: "hsl(201, 100%, 44%)", // #009EE0
+    umverteilung: 12.9,
   },
   Linke: {
     label: "Die Linke",
     color: "hsl(333, 60%, 45%)", // #BE3075
+    umverteilung: -15.9,
   },
   BSW: {
     label: "BSW",
     color: "hsl(30 80% 55%)", // #009EE0
+    umverteilung: 4.2,
   },
 } satisfies ChartConfig;
 
@@ -231,6 +249,7 @@ export default function IncomeImpact() {
   );
   const [view, setView] = useState<"parties" | "brackets">("parties");
   const [showAbsolute, setShowAbsolute] = useState<boolean>(true);
+  const [hoveredParty, setHoveredParty] = useState<string | null>(null);
 
   console.log("selectedBracket", selectedBracket);
   console.log(
@@ -337,23 +356,37 @@ export default function IncomeImpact() {
             ))}
           </RadioGroup>
         ) : (
-          <Select
-            value={selectedBracket || ""}
-            onValueChange={(value) => {
-              setSelectedBracket((value as BracketLabel) || null);
-            }}
-          >
-            <SelectTrigger className="w-[280px]">
-              <SelectValue placeholder="Einkommensgruppe wählen" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.keys(partyImpacts).map((bracket) => (
-                <SelectItem key={bracket} value={bracket}>
-                  {bracket.replace("k", ".000")} €
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Select
+              value={selectedBracket || ""}
+              onValueChange={(value) => {
+                setSelectedBracket((value as BracketLabel) || null);
+              }}
+            >
+              <SelectTrigger className="w-[280px]">
+                <SelectValue placeholder="Einkommensgruppe wählen" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(partyImpacts).map((bracket) => (
+                  <SelectItem key={bracket} value={bracket}>
+                    {bracket.replace("k", ".000")} €
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="flex items-center space-x-2">
+              <Switch
+                checked={showAbsolute}
+                onCheckedChange={setShowAbsolute}
+                id="value-type"
+              />
+              <Label htmlFor="value-type">
+                {showAbsolute
+                  ? "Absolute Werte (€)"
+                  : "Prozentuale Änderung (%)"}
+              </Label>
+            </div>
+          </div>
         )}
       </div>
 
@@ -373,6 +406,16 @@ export default function IncomeImpact() {
               <BarChart
                 data={chartData}
                 margin={{ top: 20, right: 20, bottom: 20, left: 60 }}
+                onMouseMove={(data) => {
+                  if (data && data.activePayload) {
+                    const party = data.activePayload[0].payload
+                      .party as keyof PartyImpacts;
+                    setHoveredParty(party as string);
+                  }
+                }}
+                onMouseLeave={() => {
+                  setHoveredParty(null);
+                }}
               >
                 <CartesianGrid vertical={false} />
                 <XAxis
@@ -413,16 +456,42 @@ export default function IncomeImpact() {
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
-          <div className="flex items-center space-x-2">
-            <Switch
-              checked={showAbsolute}
-              onCheckedChange={setShowAbsolute}
-              id="value-type"
-            />
-            <Label htmlFor="value-type">
-              {showAbsolute ? "Absolute Werte (€)" : "Prozentuale Änderung (%)"}
-            </Label>
-          </div>
+        </div>
+      )}
+      {/* Add inequality reduction indicator */}
+      {hoveredParty && (
+        <div className="rounded-lg bg-muted p-4">
+          <h3 className="font-semibold mb-2">
+            Das Armutsrisiko in Deutschland durch Wahl von{" "}
+            <span className=" text-muted-foreground ">
+              {chartConfig[hoveredParty as keyof typeof chartConfig]?.label}:{" "}
+            </span>
+            <span
+              className={cn(
+                "text-muted-foreground",
+                hoveredParty && povertyRiskImpacts[hoveredParty] > 0
+                  ? "text-red-500"
+                  : "text-green-500"
+              )}
+            >
+              {povertyRiskImpacts[
+                hoveredParty as keyof typeof povertyRiskImpacts
+              ] > 0
+                ? "steigt um "
+                : "sinkt um "}
+              {Math.abs(
+                povertyRiskImpacts[
+                  hoveredParty as keyof typeof povertyRiskImpacts
+                ]
+              )}
+              %
+            </span>
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Die Armutsrisikoquote ist ein Maß für die Anzahl der Menschen, die
+            unterhalb der Armutsgrenze leben und gibt an, wie sich durch die
+            Wahl einer bestimmten Partei das Armutsrisiko prozentual verändert.
+          </p>
         </div>
       )}
     </div>
