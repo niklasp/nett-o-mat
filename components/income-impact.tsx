@@ -282,7 +282,7 @@ export default function IncomeImpact() {
   return (
     <div className="container mx-auto px-4 py-12 sm:px-6 max-w-4xl ">
       <h1 className="text-2xl font-bold mb-6 sm:mb-8">
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-purple-500 text-5xl block">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 text-5xl block">
           Verteil-O-Mat
         </span>
         <br />
@@ -463,41 +463,45 @@ export default function IncomeImpact() {
         </div>
       )}
       {/* Add inequality reduction indicator */}
-      {hoveredParty && (
-        <div className="rounded-lg bg-muted p-4">
-          <h3 className="font-semibold mb-2">
-            Das Armutsrisiko in Deutschland durch Wahl von{" "}
-            <span className=" text-muted-foreground ">
-              {chartConfig[hoveredParty as keyof typeof chartConfig]?.label}:{" "}
-            </span>
-            <span
-              className={cn(
-                "text-muted-foreground",
-                hoveredParty && povertyRiskImpacts[hoveredParty] > 0
-                  ? "text-red-500"
-                  : "text-green-500"
-              )}
-            >
-              {povertyRiskImpacts[
-                hoveredParty as keyof typeof povertyRiskImpacts
-              ] > 0
-                ? "steigt um "
-                : "sinkt um "}
-              {Math.abs(
-                povertyRiskImpacts[
+
+      <div className="rounded-lg p-4 min-h-28">
+        {hoveredParty && (
+          <>
+            <h3 className="font-semibold mb-2">
+              Das Armutsrisiko in Deutschland durch Wahl von{" "}
+              <span className="text-muted-foreground ">
+                {chartConfig[hoveredParty as keyof typeof chartConfig]?.label}{" "}
+              </span>
+              <span
+                className={cn(
+                  "text-muted-foreground",
+                  hoveredParty && povertyRiskImpacts[hoveredParty] > 0
+                    ? "text-red-500"
+                    : "text-green-500"
+                )}
+              >
+                {povertyRiskImpacts[
                   hoveredParty as keyof typeof povertyRiskImpacts
-                ]
-              )}
-              %
-            </span>
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Die Armutsrisikoquote ist ein Maß für die Anzahl der Menschen, die
-            unterhalb der Armutsgrenze leben und gibt an, wie sich durch die
-            Wahl einer bestimmten Partei das Armutsrisiko prozentual verändert.
-          </p>
-        </div>
-      )}
+                ] > 0
+                  ? "steigt um "
+                  : "sinkt um "}
+                {Math.abs(
+                  povertyRiskImpacts[
+                    hoveredParty as keyof typeof povertyRiskImpacts
+                  ]
+                )}
+                %
+              </span>
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Die Armutsrisikoquote ist ein Maß für die Anzahl der Menschen, die
+              unterhalb der Armutsgrenze leben und gibt an, wie sich durch die
+              Wahl einer bestimmten Partei das Armutsrisiko prozentual
+              verändert.
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }
