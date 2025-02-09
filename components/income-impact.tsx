@@ -280,7 +280,7 @@ export default function IncomeImpact() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-12 sm:px-6 max-w-3xl justify-items-center">
+    <div className="container mx-auto px-4 py-12 sm:px-6 max-w-3xl ">
       <h1 className="text-2xl font-bold mb-6 sm:mb-8">
         Auswirkungen der Bundestagswahl am 23.02.2025 auf Ihr Einkommen
       </h1>
